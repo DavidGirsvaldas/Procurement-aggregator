@@ -1,0 +1,8 @@
+0. Choose and setup AI agent
+1. Create blank DOTNET application
+2. Can fetch a ted.europa.eu page
+3. Can itterate and fetch every tender (max 10) from ted.europa.eu page
+4. Can parse basic information from a Tender and store inMemory
+5. Will filter out only software related tenders
+6. Will keep state and search only for new tenders
+7. Add additional tender site, repeat steps 2-6
