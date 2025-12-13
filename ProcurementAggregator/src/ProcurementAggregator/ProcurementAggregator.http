@@ -1,0 +1,6 @@
+@ProcurementAggregator_HostAddress = http://localhost:5123
+
+GET {{ProcurementAggregator_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
