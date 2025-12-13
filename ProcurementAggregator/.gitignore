@@ -1,0 +1,93 @@
+﻿# ===== Git ignore for .NET + JetBrains Rider/IDE files =====
+
+# JetBrains Rider / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+*.sln.iml
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/shelf/
+.idea/**/contentModel.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/dataSources.xml
+.idea/**/sqlDataSources.xml
+.idea/**/httpRequests/
+.idea/**/libraries/
+.idea/**/indexes/
+.idea/**/assetWizardSettings.xml
+.idea/**/UiDesigner.xml
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Visual Studio (Windows)
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Ll]og/
+out/
+
+# Test results & coverage
+[Tt]est[Rr]esults/
+*.trx
+*.coverage
+*.coveragexml
+.coverage
+.coveragexml
+.vscoverage
+.vscoveragexml
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuget.props
+*.nuget.targets
+.nuget/
+
+# dotnet & tooling caches
+project.lock.json
+project.fragment.lock.json
+artifacts/
+global.json
+
+# ASP.NET Core
+wwwroot/lib/
+# Local environment configs (keep shared appsettings.json tracked)
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.Local.json
+
+# Static web assets (generated)
+**/obj/**/staticwebassets.*
+
+# Logs
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
