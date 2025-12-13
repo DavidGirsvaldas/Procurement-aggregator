@@ -1,8 +1,11 @@
+using ProcurementAggregator.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddHttpClient<TedPageFetcher>();
 
 var app = builder.Build();
 
@@ -32,6 +35,15 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
+
+app.MapGet("/fetch", async (TedPageFetcher fetcher, CancellationToken ct) =>
+{
+    var html = await fetcher.FetchAsync(ct);
+    var truncated = html.Length > 1000 ? html[..1000] : html;
+    Console.WriteLine(truncated);
+    return Results.Text(truncated, "text/html; charset=utf-8");
+})
+.WithName("FetchTedPage");
 
 app.Run();
 
