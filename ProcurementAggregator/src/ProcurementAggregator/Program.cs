@@ -1,11 +1,12 @@
-using ProcurementAggregator.Services;
+
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddHttpClient<TedPageFetcher>();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -17,37 +18,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+// Transparent proxy endpoint: forwards request body to TED API and returns raw JSON
+app.MapPost("/search", async (HttpRequest request, IHttpClientFactory httpClientFactory, CancellationToken ct) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    using var reader = new StreamReader(request.Body, Encoding.UTF8);
+    var requestBody = await reader.ReadToEndAsync(ct);
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var client = httpClientFactory.CreateClient();
+    using var content = new StringContent(requestBody ?? string.Empty, Encoding.UTF8, "application/json");
+    using var response = await client.PostAsync("https://tedweb.api.ted.europa.eu/private-search/api/v1/notices/search", content, ct);
+    var json = await response.Content.ReadAsStringAsync(ct);
 
-app.MapGet("/fetch", async (TedPageFetcher fetcher, CancellationToken ct) =>
-{
-    var html = await fetcher.FetchAsync(ct);
-    var truncated = html.Length > 1000 ? html[..1000] : html;
-    Console.WriteLine(truncated);
-    return Results.Text(truncated, "text/html; charset=utf-8");
-})
-.WithName("FetchTedPage");
+    // Return raw JSON as a string (no extra handling)
+    return Results.Text(json, "application/json");
+});
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
