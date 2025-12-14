@@ -1,5 +1,5 @@
+using ProcurementAggregator.Services;
 
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<ITedSearchService, TedSearchService>();
 
 var app = builder.Build();
 
@@ -18,16 +19,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Transparent proxy endpoint: forwards request body to TED API and returns raw JSON
-app.MapPost("/search", async (HttpRequest request, IHttpClientFactory httpClientFactory, CancellationToken ct) =>
+// Transparent proxy endpoint: forwards a fixed request payload to TED API and returns raw JSON
+app.MapGet("/search", async (ITedSearchService tedSearchService, CancellationToken ct) =>
 {
-    using var reader = new StreamReader(request.Body, Encoding.UTF8);
-    var requestBody = await reader.ReadToEndAsync(ct);
-
-    var client = httpClientFactory.CreateClient();
-    using var content = new StringContent(requestBody ?? string.Empty, Encoding.UTF8, "application/json");
-    using var response = await client.PostAsync("https://tedweb.api.ted.europa.eu/private-search/api/v1/notices/search", content, ct);
-    var json = await response.Content.ReadAsStringAsync(ct);
+    var json = await tedSearchService.SearchAsync(ct);
 
     // Return raw JSON as a string (no extra handling)
     return Results.Text(json, "application/json");
