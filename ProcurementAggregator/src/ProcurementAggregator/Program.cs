@@ -1,5 +1,6 @@
+using System.Text.Json;
+using ProcurementAggregator.Models;
 using ProcurementAggregator.Services;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +25,17 @@ app.MapGet("/search", async (ITedSearchService tedSearchService, CancellationTok
 {
     var json = await tedSearchService.SearchAsync(ct);
 
-    // Return raw JSON as a string (no extra handling)
-    return Results.Text(json, "application/json");
+    var options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    var model = JsonSerializer.Deserialize<TedSearchResponse>(json, options);
+    if (model is null)
+        return Results.Problem("Failed to deserialize TED response.");
+
+    // Return typed object (ASP.NET will serialize it back to JSON)
+    return Results.Ok(model);
 });
 
 app.Run();
