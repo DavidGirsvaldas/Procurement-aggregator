@@ -34,8 +34,9 @@ app.MapGet("/search", async (ITedSearchService tedSearchService, CancellationTok
     if (model is null)
         return Results.Problem("Failed to deserialize TED response.");
 
-    // Return typed object (ASP.NET will serialize it back to JSON)
-    return Results.Ok(model);
+    var tenders = model.Notices.Select(n => n.ToTender()).ToList();
+
+    return Results.Ok(tenders);
 });
 
 app.Run();

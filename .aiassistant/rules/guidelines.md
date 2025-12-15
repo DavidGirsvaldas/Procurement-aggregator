@@ -4,12 +4,17 @@ apply: always
 
 When asked to do a task, always break the task into details, explain them to me and then wait for me to confirm before applying the changes.
 
+## Project structure
+-ProcurementAggregator\src is for the business logic
+-ProcurementAggregator\test is for the test related code only
+
 ## Coding Standards
 
 ### C#
 
 Coding standards:
 - Use official naming conventions. If my instructions don't comply with the guidelines, inform me about it.
+- When naming new files created use the class names.
 - Always prefer using modern .Net features.
 - Always use nullable reference types.
 - Always perform null checks using `is null` or `is not null` instead of equality operators.
